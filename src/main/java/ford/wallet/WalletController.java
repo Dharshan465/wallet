@@ -1,6 +1,5 @@
 package ford.wallet;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,10 +29,10 @@ public class WalletController {
         }
     }
 
-    @GetMapping("/{emailId}")
-    public ResponseEntity<?> getUserWalletByEmailId(@PathVariable String emailId) throws WalletException {
+    @GetMapping("/emailId")
+    public ResponseEntity<?> getUserWalletByEmailId(@RequestBody WalletFundsDTO walletFundsDTO) throws WalletException {
         try {
-            return ResponseEntity.ok(this.walletService.getWalletByEmailId(emailId));
+            return ResponseEntity.ok(this.walletService.getWalletByEmailId(walletFundsDTO.getEmail()));
         } catch (WalletNotFoundException e) {
             //return ResponseEntity.ok("Error occurred : " + e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error Occurred : " + e.getMessage());
@@ -67,9 +66,10 @@ public class WalletController {
         }
     }
 
-    @PatchMapping("/addfunds/{emailId}/{amount}")
-    public Double addFundsToWallet(@PathVariable String emailId, @PathVariable Double amount,@RequestBody Wallet newWallet) throws WalletException, WalletNotFoundException, WalletAddFundException {
-        return this.walletService.addFundsToWalletByEmailId(emailId, amount);
+    //DTO to get parameters
+    @PatchMapping("/addfunds")
+    public Double addFundsToWallet(@RequestBody WalletFundsDTO walletFundsDTO) throws WalletException, WalletNotFoundException, WalletAddFundException {
+        return this.walletService.addFundsToWalletByEmailId(walletFundsDTO.getEmail(), walletFundsDTO.getBalance());
     }
 
     @PatchMapping("/withdrawfunds/{emailId}/{amount}")
@@ -88,6 +88,21 @@ public class WalletController {
         return "User wallet deleted successfully with emailId: " + emailId;
 
     }
+    //@RequestParam
+    //1.we can have default value
+    //2.we can make it optional
+
+    @GetMapping
+    public String getInfo(@RequestParam(value = "name", defaultValue = "User", required = false) String name) {
+        return "Hello, " + name + "! Welcome to the Wallet Service.";
+    }
+
+
+
+
+
+
+
 
 
 }

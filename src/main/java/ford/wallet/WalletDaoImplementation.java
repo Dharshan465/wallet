@@ -12,11 +12,11 @@ public class WalletDaoImplementation  implements WalletDao {
 
    private final Connection connection;
 
-   public WalletDaoImplementation() {
+   public WalletDaoImplementation() throws WalletException {
        try {
            this.connection = DriverManager.getConnection("jdbc:h2:file:./data/wallet", "sa", "password");
        } catch (SQLException e) {
-           throw new RuntimeException(e);
+           throw new WalletException("Error Occured : "+e.getMessage());
        }
 
    }
